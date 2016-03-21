@@ -1,24 +1,21 @@
-var youtube = require("youtube-api");
-var ytdl = require("ytdl-core");
+var google = require('googleapis')
+var youtube = google.youtube({version: 'v3', auth: "AIzaSyD6CYoeesmOj6j91VPRvdngxFR7XqSTjgw",proxy:"http://10.3.100.207:8080"})
 
-youtube.authenticate({
-	type:"key",key:"AIzaSyDGwNXYUqRgDraCTf5z7lBdUTgVAfqeSPM"
-});
-
-var trying=function(){
-	youtube.playlistItems.list({
-		part:"snippet",
-		pageToken:null,
-		maxResults:50,
-		playlistId:"PL7mSAxuBjwt8MDfDOq6nswV8z7a5Yq5_I"
-	},function(err,data){
-		if(err){
-			console.log("error");
-		}
-		else{
-			console.log(data);
-		}
-	})
+var tryRetriv=function(){
+  youtube.playlistItems.list({
+    part:"snippet",
+    playlistId:"PL7mSAxuBjwt-rE7raeScE6AFpaTh56242"
+  },function(error,docs){
+    if(error){
+      console.log(error);
+    }
+    else{
+      console.log(docs);
+      for(var index=0;index<docs.items.length;index++){
+        console.log(docs.items[index].snippet.title);
+      }
+    }
+  })
 }
 
-trying();
+tryRetriv();

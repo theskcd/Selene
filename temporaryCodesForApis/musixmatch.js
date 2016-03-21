@@ -3,7 +3,7 @@ var request=require('request');
 
 var test=function(){
 	console.log('here');
-	request.get('http://api.musixmatch.com/ws/1.1/track.search?apikey=eed5fbf7c747a67e2bded3ec443cd1e9&fomat=json?q_artist=david%20guetta&q_track=bang%20my%20head&f_has_lyrics=1&page=1&page_size=1&s_track_rating=desc',function(error,response,body){
+	request.get('http://api.musixmatch.com/ws/1.1/track.search?apikey=eed5fbf7c747a67e2bded3ec443cd1e9&fomat=json?q_artist=american%20authors&q_track=best%20day%20of%20my%20life&f_has_lyrics=1&page=1&page_size=1&s_track_rating=desc',function(error,response,body){
 		 console.log(body);
 		var responseData=JSON.parse(body);
 		 console.log(responseData);
