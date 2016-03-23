@@ -48,9 +48,4 @@ router.use(function (req, res, next) {
 	}
 });
 
-router.route('/users')
-	.get(function(req,res){
-		console.log('request for users');
-	})
-
 module.exports=router;
