@@ -2,9 +2,7 @@ var mongoose=require('mongoose');
 var Schema=mongoose.Schema;
 
 var UserSchema=new Schema({
-	fname:{type:String,required:true},
-	lname:{type:String,required:true},
-	email:{type:String},
+	name:{type:String,required:true},
 	facebook:{
 		id:{type:String,required:true,uniqe:true}
 	}
