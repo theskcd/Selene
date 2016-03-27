@@ -28,5 +28,9 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:design:23.2.1'
+    compile 'com.google.android.gms:play-services-auth:8.4.0'
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
+    compile 'com.roughike:bottom-bar:1.2.4'
 }
+
+apply plugin: 'com.google.gms.google-services'

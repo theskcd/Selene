@@ -6,5 +6,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string name="signed_in_fmt">Signed in as: %s</string>
+
     <string name="action_settings">Settings</string>
 </resources>

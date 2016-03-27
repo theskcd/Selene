@@ -1,0 +1,64 @@
+{
+  "project_info": {
+    "project_id": "selene-2d96d",
+    "project_number": "314018233988",
+    "name": "Selene"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:314018233988:android:3c47dd957de8fa6d",
+        "client_id": "android:io.github.ghostwriternr.selene",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "io.github.ghostwriternr.selene",
+          "certificate_hash": []
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "314018233988-hghf41kgnk077kdghj2oloj6l9taamd0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.github.ghostwriternr.selene",
+            "certificate_hash": "1DE959C42BBFF583A57E3C66C1F76BAECD08AD5A"
+          }
+        },
+        {
+          "client_id": "314018233988-rmjrnnu9kae01dc073jb1oqd09c13l17.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-75642357-1"
+          }
+        },
+        "cloud_messaging_service": {
+          "status": 2,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "314018233988-rmjrnnu9kae01dc073jb1oqd09c13l17.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "google_signin_service": {
+          "status": 2
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}
