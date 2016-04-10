@@ -1,26 +1,37 @@
 package io.github.ghostwriternr.selene;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Fade;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.ncapdevi.fragnav.FragNavController;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import layout.FriendsFragment;
+import layout.HotFragment;
+import layout.UserFragment;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, UserFragment.OnFragmentInteractionListener, FriendsFragment.OnFragmentInteractionListener, HotFragment.OnFragmentInteractionListener {
 
     private BottomBar mBottomBar;
 
@@ -29,17 +40,21 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().add(R.id.MainFrame, new PlaceholderFragment()).commit();
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -50,28 +65,53 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        List<Fragment> fragments = new ArrayList<>(3);
+        fragments.add(HotFragment.newInstance("Hello", "World"));
+        fragments.add(FriendsFragment.newInstance("Yolo", "People!"));
+        fragments.add(UserFragment.newInstance("Heyo", "guys!"));
+
+        final FragNavController fragNavController = new FragNavController(getSupportFragmentManager(), R.id.MainFrame, fragments);
+//        mBottomBar = BottomBar.attachShy((CoordinatorLayout) findViewById(R.id.myCoordinator),
+//                findViewById(R.id.myScrollingContent), savedInstanceState);
         mBottomBar = BottomBar.attach(this, savedInstanceState);
         mBottomBar.noTopOffset();
+        mBottomBar.setActiveTabColor("#D32F2F");
         mBottomBar.setItemsFromMenu(R.menu.bottombar_menu, new OnMenuTabClickListener() {
             @Override
             public void onMenuTabSelected(@IdRes int menuItemId) {
-                if (menuItemId == R.id.bb_menu_favorites) {
+                if (menuItemId == R.id.bb_menu_friends) {
                     // The user selected item number one.
+                    getSupportActionBar().setTitle("Hot");
+                    fragNavController.switchTab(FragNavController.TAB1);
+                    fragNavController.clearStack();
+                } else if (menuItemId == R.id.bb_menu_favorites) {
                     getSupportActionBar().setTitle("Favorites");
-                }
-                else if (menuItemId == R.id.bb_menu_nearby) {
-                    getSupportActionBar().setTitle("Nearby");
-                }
-                else {
-                    getSupportActionBar().setTitle("Friends");
+                    fragNavController.switchTab(FragNavController.TAB2);
+                    fragNavController.clearStack();
+                } else {
+                    getSupportActionBar().setTitle("User");
+//                    fragNavController.getCurrentStack().elementAt(FragNavController.TAB3)
+                    fragNavController.switchTab(FragNavController.TAB3);
+                    fragNavController.clearStack();
                 }
             }
 
             @Override
             public void onMenuTabReSelected(@IdRes int menuItemId) {
-//                if (resId == R.id.bottomBarItemOne) {
-                    // The user reselected item number one, scroll your content to top.
-//                }
+                fragNavController.clearStack();
+                Log.v("MainActivity", "Reselected!");
+                if (menuItemId == R.id.bb_menu_friends) {
+                    //The user reselected item number one, scroll your content to top
+                    ListView listView = (ListView) findViewById(R.id.TestDetailsView);
+                    assert listView != null;
+                    listView.smoothScrollToPosition(0);
+                } else if (menuItemId == R.id.bb_menu_favorites) {
+                    ListView listView = (ListView) findViewById(R.id.TestDetailsView);
+                    assert listView != null;
+                    listView.smoothScrollToPosition(0);
+                } else {
+
+                }
             }
         });
     }
@@ -156,5 +196,17 @@ public class MainActivity extends AppCompatActivity
         // Necessary to restore the BottomBar's state, otherwise we would
         // lose the current tab on orientation change.
         mBottomBar.onSaveInstanceState(outState);
+    }
+
+
+    public static class PlaceholderFragment extends Fragment {
+
+        public PlaceholderFragment() {
+
+        }
+    }
+
+    public void onFragmentInteraction(Uri uri){
+        //you can leave it empty
     }
 }

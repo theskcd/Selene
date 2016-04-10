@@ -26,9 +26,11 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 
 import java.util.Arrays;
@@ -42,8 +44,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private static final int RC_SIGN_IN = 9001;
     public final static String INTENT_MESSAGE = "io.github.ghostwriternr.selene.";
 
-    String fbauth = "http://10.117.11.81:8080/api/v1/login?";
-    String ggauth = "http://10.117.11.81:8080/api/v1/googleDATA?";
+    String fbauth = "http://10.5.16.232:8080/api/v1/login?";
+    String ggauth = "http://10.5.16.232:8080/api/v1/googleDATA?";
 //    RequestQueue queue = Volley.newRequestQueue(this);
 
     protected void setTranslucent(boolean makeTranslucent) {
@@ -68,7 +70,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         findViewById(R.id.sign_in_button).setOnClickListener((View.OnClickListener) this);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestProfile()
+                .requestScopes(new Scope("https://www.googleapis.com/auth/youtube"))
+                .requestServerAuthCode("314018233988-rmjrnnu9kae01dc073jb1oqd09c13l17.apps.googleusercontent.com", false)
                 .build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -167,9 +170,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
-            info.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+            info.setText(getString(R.string.signed_in_fmt, acct.getServerAuthCode()));
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            ggauth = ggauth + "token=" + acct.getId();
+            ggauth = ggauth + "gtoken=" + acct.getServerAuthCode();
             StringRequest stringRequest = new StringRequest(Request.Method.GET, ggauth,
                     new Response.Listener<String>() {
                         @Override
