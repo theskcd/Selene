@@ -6,13 +6,13 @@ from collections import deque
 
 client = MongoClient()
 db = client.fb_db
-collection = db.network_dict
+friendsCollection = db.network_dict
 
 def insertEdgeIntoDb(edge):
 	row = { "u": edge[0],
 			"v": edge[1]
 		  }
-	edgeId = collection.insert_one(row)
+	edgeId = friendsCollection.insert_one(row)
 
 
 if __name__ == '__main__':
