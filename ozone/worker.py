@@ -4,13 +4,15 @@ import time
 from pymongo import MongoClient
 from collections import deque
 
-client = MongoClient('localhost',27017)
-G = client['fb_db'].network_dict
+client = MongoClient()
+db = client.fb_db
+collection = db.network_dict
 
-def 
-
+def createGraphFromDB():
+	edgeList = collection.find()
+	for edge in edgeList:
+		
+		print int(edge['u']),type(int(edge['u']))
 
 if __name__ == '__main__':
-	edge = (sys.argv[1],sys.argv[2])
-	print edge
-	inserted_id(edge)
+	createGraphFromDB()
