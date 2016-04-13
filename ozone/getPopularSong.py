@@ -114,9 +114,11 @@ def getKMostPopularSongsinCluster(source, K):
 	return kPopularSongs
 
 def main(userId, k):
+	#returns a list of K most popular songs in Cluster.
 	return getKMostPopularSongsinCluster(userId, k)
 
 if __name__ == '__main__':
+	# UserId is an integer. K is the limit of songs needed from Cluster.
 	userId = int(sys.argv[1])
 	k = int(sys.argv[2])
 	exit(main(userId, k))
