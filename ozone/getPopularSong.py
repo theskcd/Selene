@@ -94,7 +94,6 @@ def getKMostPopularSongsinCluster(source, K):
 	musicG = createSongGraphFromDB()
 	neighboursTillDepthFive = neighboursTillDepthK(networkG,source,5)
 	clusterList = neighboursTillDepthFive
-	clusterList.append(source)
 	musicPreferences = populateMusicPreferences(clusterList,musicG)
 	
 	songs = []
