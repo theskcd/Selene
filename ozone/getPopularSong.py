@@ -104,6 +104,9 @@ def getMostPopularSonginCluster(source):
 
 	return mostPopularSong
 
+def main(userId):
+	return getMostPopularSonginCluster(userId)
 
 if __name__ == '__main__':
-	return getMostPopularSonginCluster(int(sys.argv[1]))
+	userId = int(sys.argv[1])
+	exit(main(userId))
