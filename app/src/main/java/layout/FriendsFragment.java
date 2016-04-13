@@ -1,22 +1,37 @@
 package layout;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.transition.Fade;
 import android.transition.Slide;
-import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import io.github.ghostwriternr.selene.CardItem;
+import io.github.ghostwriternr.selene.CustomCardAdapter;
 import io.github.ghostwriternr.selene.R;
 
 /**
@@ -45,6 +60,10 @@ public class FriendsFragment extends Fragment {
     public FriendsFragment() {
         // Required empty public constructor
     }
+
+    String objectforreturn;
+    JSONArray jsondata;
+    View rootView;
 
     /**
      * Use this factory method to create a new instance of
@@ -83,29 +102,90 @@ public class FriendsFragment extends Fragment {
 //        setExitTransition(fade);
     }
 
+    public String getDataFromSever()
+    {
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        SharedPreferences sharedPref = getContext().getSharedPreferences("io.github.ghostwriternr", Context.MODE_PRIVATE);
+        String fid = sharedPref.getString(getString(R.string.facebook), null);
+        String jsonurl = "http://10.117.11.116:8080/api/v1/getSelfSongs?";
+        jsonurl += fid;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, jsonurl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.v("HotFragment", response);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(stringRequest);
+        return objectforreturn;
+    }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater,final ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 //        return inflater.inflate(R.layout.fragment_friends, container, false);
-        String[] data = {
-                //Random sample data
-                "Round & Round",
-                "A year without rain",
-                "Rock God",
-                "Off the chain",
-                "Summer's not hot",
-                "Intuition",
-                "Spotlight"
-        };
-        List<String> videoList = new ArrayList<>(Arrays.asList(data));
-        mVideoListAdapter = new ArrayAdapter<>(getActivity(), R.layout.card_item, R.id.SongTitle, videoList);
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        SharedPreferences sharedPref = getContext().getSharedPreferences("io.github.ghostwriternr", Context.MODE_PRIVATE);
+        String fid = sharedPref.getString(getString(R.string.facebook), null);
+        String jsonurl = "http://10.117.11.116:8080/api/v1/getselfsongs?";
+        jsonurl += fid;
 
-        View rootView = inflater.inflate(R.layout.card_video_list, container, false);
+        StringRequest stringreq = new StringRequest(Request.Method.GET, jsonurl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.v("Hot", response);
+                        try {
+                            jsondata = new JSONArray(response);
+//                            Log.d("HotFragment", jsondata.toString());
+                            List<String> videoList = new ArrayList<>();
+                            for (int i = 0; i < jsondata.length(); i++) {
+                                try {
+                                    Log.d("JSON DATA", jsondata.getJSONObject(i).getJSONObject("songDetails").getString("track_name"));
+                                    videoList.add(jsondata.getJSONObject(i).getJSONObject("songDetails").getString("track_name"));
+                                } catch (JSONException e){
 
-        ListView listView = (ListView) rootView.findViewById(R.id.TestDetailsView);
-        listView.setAdapter(mVideoListAdapter);
+                                }
+                            }
 
+                            List<CardItem> cardItems = new ArrayList<>();
+                            for (int i = 0; i < jsondata.length(); i++) {
+                                CardItem item = new CardItem(jsondata.getJSONObject(i).getJSONObject("songDetails").getString("album_coverart_100x100"), jsondata.getJSONObject(i).getJSONObject("songDetails").getString("track_name"), jsondata.getJSONObject(i).getJSONObject("songDetails").getString("artist_name"), jsondata.getJSONObject(i).getJSONObject("songDetails").getString("album_name"), jsondata.getJSONObject(i).getJSONObject("songDetails").getString("track_spotify_id"), jsondata.getJSONObject(i).getJSONObject("songDetails").getString("track_soundcloud_id"), jsondata.getJSONObject(i).getString("videoId"));
+                                cardItems.add(item);
+                            }
+                            Log.d("CHECK", "HERE");
+//                            mVideoListAdapter = new ArrayAdapter<>(getActivity(), R.layout.card_item, R.id.SongTitle, videoList);
+//
+                            rootView = inflater.inflate(R.layout.card_video_list, container, false);
+//
+                            CustomCardAdapter mVideoListAdapter = new CustomCardAdapter(getActivity(),cardItems);
+
+                            ListView listView = (ListView) rootView.findViewById(R.id.TestDetailsView);
+                            listView.setAdapter(mVideoListAdapter);
+
+
+
+                        } catch (JSONException e) {
+
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        stringreq.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(stringreq);
+        Log.d("CHECK", "HERE1");
         return rootView;
     }
 

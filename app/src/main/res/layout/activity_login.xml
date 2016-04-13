@@ -50,7 +50,7 @@
             android:layout_marginLeft="33dp"
             android:layout_marginRight="33dp"
             android:paddingBottom="10dp"
-            android:paddingLeft="40dp"
+            android:paddingLeft="15dp"
             android:paddingTop="10dp"
             android:textSize="16sp" />
 

@@ -1,6 +1,8 @@
 package io.github.ghostwriternr.selene;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -27,6 +30,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -44,9 +48,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private static final int RC_SIGN_IN = 9001;
     public final static String INTENT_MESSAGE = "io.github.ghostwriternr.selene.";
 
-    String fbauth = "http://10.5.16.232:8080/api/v1/login?";
-    String ggauth = "http://10.5.16.232:8080/api/v1/googleDATA?";
+    String fbauth = "http://10.117.11.116:8080/api/v1/login?";
+    String ggauth = "http://10.117.11.116:8080/api/v1/googleDATA?";
 //    RequestQueue queue = Volley.newRequestQueue(this);
+
 
     protected void setTranslucent(boolean makeTranslucent) {
         if (makeTranslucent) {
@@ -67,7 +72,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         setTranslucent(true);
 
-        findViewById(R.id.sign_in_button).setOnClickListener((View.OnClickListener) this);
+        findViewById(R.id.sign_in_button).setOnClickListener(this);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(new Scope("https://www.googleapis.com/auth/youtube"))
@@ -79,6 +84,33 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
+//        signIn();
+
+        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+        final com.google.android.gms.common.SignInButton gbutton = (com.google.android.gms.common.SignInButton)findViewById(R.id.sign_in_button);
+        if (opr.isDone()) {
+            // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
+            // and the GoogleSignInResult will be available instantly.
+            Log.d(TAG, "Got cached sign-in");
+            GoogleSignInResult result = opr.get();
+            handleSignInResult(result);
+            gbutton.setVisibility(View.GONE);
+//            gbutton.setBackgroundColor(0);
+        } else {
+            // If the user has not previously signed in on this device or the sign-in has expired,
+            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
+            // single sign-on will occur in this branch.
+//            showProgressDialog();
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(GoogleSignInResult googleSignInResult) {
+//                    hideProgressDialog();
+                    handleSignInResult(googleSignInResult);
+                    gbutton.setVisibility(View.GONE);
+//                    gbutton.setBackgroundColor(1);
+                }
+            });
+        }
 
         info = (TextView) findViewById(R.id.info);
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
@@ -92,10 +124,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
             @Override
             public void onSuccess(LoginResult loginResult) {
+                SharedPreferences sharedPref = getSharedPreferences("io.github.ghostwriternr", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString(getString(R.string.facebook),"token=" + loginResult.getAccessToken().getToken() + "&fbid=" + loginResult.getAccessToken().getUserId());
+                editor.apply();
                 info.setText(
                         "User ID: " + loginResult.getAccessToken().getUserId() + "\n" + "Auth Token: " + loginResult.getAccessToken().getToken()
                 );
-                fbauth = fbauth + "token=" + loginResult.getAccessToken().getToken() + "&fbid=" + loginResult.getAccessToken().getUserId();
+                fbauth += "token=" + loginResult.getAccessToken().getToken() + "&fbid=" + loginResult.getAccessToken().getUserId();
                 Log.v("LoginActivity", fbauth);
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, fbauth,
                         new Response.Listener<String>() {
@@ -111,6 +147,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         info.setText("That didn't work!");
                     }
                 });
+                stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
                 queue.add(stringRequest);
             }
 
@@ -129,27 +166,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onStart() {
         super.onStart();
-
-        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
-        if (opr.isDone()) {
-            // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
-            // and the GoogleSignInResult will be available instantly.
-            Log.d(TAG, "Got cached sign-in");
-            GoogleSignInResult result = opr.get();
-            handleSignInResult(result);
-        } else {
-            // If the user has not previously signed in on this device or the sign-in has expired,
-            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
-            // single sign-on will occur in this branch.
-//            showProgressDialog();
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                @Override
-                public void onResult(GoogleSignInResult googleSignInResult) {
-//                    hideProgressDialog();
-                    handleSignInResult(googleSignInResult);
-                }
-            });
-        }
     }
 
     @Override
@@ -169,10 +185,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (result.isSuccess()) {
             RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
             // Signed in successfully, show authenticated UI.
+//            RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
             GoogleSignInAccount acct = result.getSignInAccount();
+            SharedPreferences sharedPref = getSharedPreferences("io.github.ghostwriternr", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString(getString(R.string.google),"gtoken=" + acct.getServerAuthCode());
+            editor.apply();
             info.setText(getString(R.string.signed_in_fmt, acct.getServerAuthCode()));
-            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            ggauth = ggauth + "gtoken=" + acct.getServerAuthCode();
+            com.google.android.gms.common.SignInButton gbutton = (com.google.android.gms.common.SignInButton)findViewById(R.id.sign_in_button);
+//            gbutton.setVisibility(View.GONE);
+//            String fbstr = getResources().getString(R.string.facebook);
+            String fbstr = sharedPref.getString(getString(R.string.facebook),null);
+            ggauth = ggauth + fbstr + "&gtoken=" + acct.getServerAuthCode();
             StringRequest stringRequest = new StringRequest(Request.Method.GET, ggauth,
                     new Response.Listener<String>() {
                         @Override
@@ -187,6 +211,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     info.setText("That didn't work out!");
                 }
             });
+            stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             queue.add(stringRequest);
         }
         else
@@ -209,7 +234,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sign_in_button: {
-                signOut();
                 signIn();
                 break;
             }
