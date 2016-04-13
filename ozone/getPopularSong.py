@@ -42,7 +42,7 @@ def createSongGraphFromDB():
 		musicG[u].append(song)
 	return musicG
 
-def neighboursTillDepthK(networkG,source,depth):
+def neighboursTillDepthK(networkG, source, depth):
 	# print 'Running BFS'
 	Q = Queue.Queue()
 	visited = {}
@@ -73,7 +73,7 @@ def neighboursTillDepthK(networkG,source,depth):
 
 	return neighbours
 
-def populateMusicPreferences(clusterList,musicG):
+def populateMusicPreferences(clusterList, musicG):
 	musicFrequencyDict = {}
 	for user in clusterList:
 		for song in musicG[user]:
@@ -84,29 +84,39 @@ def populateMusicPreferences(clusterList,musicG):
 	return musicFrequencyDict
 
 
-def getMostPopularSonginCluster(source):
-	networkG = createNetworkGraphFromDB()
+def getKMostPopularSongsinCluster(source, K):
+	"""
+		Returns a list of K most Popular songs in decreasing order of frequency in Cluster.
+		If the total no. of songs in Cluster is < K, then it returns the list of all songs.
+	"""
 
+	networkG = createNetworkGraphFromDB()
 	musicG = createSongGraphFromDB()
 	neighboursTillDepthFive = neighboursTillDepthK(networkG,source,5)
 	clusterList = neighboursTillDepthFive
 	clusterList.append(source)
 	musicPreferences = populateMusicPreferences(clusterList,musicG)
 	
-	songs = list(musicPreferences.keys())
-	frequency = list(musicPreferences.values())
-	mostPopularSong = songs[frequency.index(max(frequency))]
+	songs = []
+	for song in musicPreferences.keys():
+		songs.append((musicPreferences[song],song))
+	songs.sort()
+
+	kPopularSongs = []
+	for i in range(min(k,len(songs))):
+		kPopularSongs.append(songs[i][1])
 
 	# print 'Printing Music Preferences in Cluster'
 	# for song in songs:
 	# 	print song,
 	# print 'mostPopularSong: ' + str(mostPopularSong)
 
-	return mostPopularSong
+	return kPopularSongs
 
-def main(userId):
-	return getMostPopularSonginCluster(userId)
+def main(userId, k):
+	return getKMostPopularSongsinCluster(userId, k)
 
 if __name__ == '__main__':
 	userId = int(sys.argv[1])
-	exit(main(userId))
+	k = int(sys.argv[2])
+	exit(main(userId, k))
