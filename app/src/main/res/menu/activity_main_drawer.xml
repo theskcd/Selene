@@ -4,20 +4,20 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/naresh"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:icon="@drawable/ic_sentiment_very_satisfied_black_24dp"
+            android:title="R Naresh" />
         <item
             android:id="@+id/pani"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:icon="@drawable/ic_sentiment_neutral_black_24dp"
+            android:title="Sandeep Kumar Pani" />
         <item
             android:id="@+id/vikas"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:icon="@drawable/ic_sentiment_very_satisfied_black_24dp"
+            android:title="Vikas Chaudhary" />
         <item
             android:id="@+id/anmol"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:icon="@drawable/ic_sentiment_very_satisfied_black_24dp"
+            android:title="Anmol Gulati" />
     </group>
 
     <!--<item android:title="Communicate">-->
