@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        String ggauth = "http://10.117.11.116/api/v1/googleDATA?";
+        String ggauth = "http://10.5.27.227/api/v1/googleDATA?";
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
         SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("io.github.ghostwriternr", Context.MODE_PRIVATE);
         String gid = sharedPref.getString(getString(R.string.google), null);

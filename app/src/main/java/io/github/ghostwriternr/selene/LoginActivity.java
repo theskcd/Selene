@@ -48,8 +48,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private static final int RC_SIGN_IN = 9001;
     public final static String INTENT_MESSAGE = "io.github.ghostwriternr.selene.";
 
-    String fbauth = "http://10.117.11.116:8080/api/v1/login?";
-    String ggauth = "http://10.117.11.116:8080/api/v1/googleDATA?";
+    String fbauth = "http://10.5.27.227:8080/api/v1/login?";
+    String ggauth = "http://10.5.27.227:8080/api/v1/googleDATA?";
 //    RequestQueue queue = Volley.newRequestQueue(this);
 
 

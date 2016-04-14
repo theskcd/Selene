@@ -102,7 +102,7 @@ public class UserFragment extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(getContext());
         SharedPreferences sharedPref = getContext().getSharedPreferences("io.github.ghostwriternr", Context.MODE_PRIVATE);
         String fid = sharedPref.getString(getString(R.string.facebook), null);
-        String jsonurl = "http://10.117.11.116:8080/api/v1/getfriends?";
+        String jsonurl = "http://10.5.27.227:8080/api/v1/getfriends?";
         jsonurl += fid;
 
         StringRequest stringreq = new StringRequest(Request.Method.GET, jsonurl,

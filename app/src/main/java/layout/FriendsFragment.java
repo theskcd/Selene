@@ -107,7 +107,7 @@ public class FriendsFragment extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(getContext());
         SharedPreferences sharedPref = getContext().getSharedPreferences("io.github.ghostwriternr", Context.MODE_PRIVATE);
         String fid = sharedPref.getString(getString(R.string.facebook), null);
-        String jsonurl = "http://10.117.11.116:8080/api/v1/getSelfSongs?";
+        String jsonurl = "http://10.5.27.227:8080/api/v1/getSelfSongs?";
         jsonurl += fid;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, jsonurl,
@@ -135,7 +135,7 @@ public class FriendsFragment extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(getContext());
         SharedPreferences sharedPref = getContext().getSharedPreferences("io.github.ghostwriternr", Context.MODE_PRIVATE);
         String fid = sharedPref.getString(getString(R.string.facebook), null);
-        String jsonurl = "http://10.117.11.116:8080/api/v1/getselfsongs?";
+        String jsonurl = "http://10.5.27.227:8080/api/v1/getselfsongs?";
         jsonurl += fid;
 
         StringRequest stringreq = new StringRequest(Request.Method.GET, jsonurl,
