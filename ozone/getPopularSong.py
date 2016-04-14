@@ -64,23 +64,23 @@ def neighboursTillDepthK(networkG, source, depth):
 				Q.put(v)
 				level[v] = level[u] + 1
 				visited[v] = True
-				neighbours.append(v)
+				neighbours.append((level[v],v))
 
 	# print 'Printing neighbours of ' + str(source)
-	# for v in neighbours:
-	# 	print v,
+	# for lev, v in neighbours:
+	# 	print str(lev) + ' ' + str(v)
 	# print '\n'
 
 	return neighbours
 
 def populateMusicPreferences(clusterList, musicG):
 	musicFrequencyDict = {}
-	for user in clusterList:
+	for level,user in clusterList:
 		for song in musicG[user]:
 			if(song not in musicFrequencyDict):
-				musicFrequencyDict[song] = 1
+				musicFrequencyDict[song] = (5-level) + 1
 			else:
-				musicFrequencyDict[song] += 1
+				musicFrequencyDict[song] += (5-level) + 1
 	return musicFrequencyDict
 
 
@@ -99,16 +99,15 @@ def getKMostPopularSongsinCluster(source, K):
 	songs = []
 	for song in musicPreferences.keys():
 		songs.append((musicPreferences[song],song))
-	songs.sort()
+	songs.sort(reverse=True)
+
+	# print 'Printing musicPreferences: '
+	# for freq,song in songs:
+	# 	print str(freq) + ' '  + str(song)
 
 	kPopularSongs = []
 	for i in range(min(k,len(songs))):
 		kPopularSongs.append(songs[i][1])
-
-	# print 'Printing Music Preferences in Cluster'
-	# for song in songs:
-	# 	print song,
-	# print 'mostPopularSong: ' + str(mostPopularSong)
 
 	return kPopularSongs
 
