@@ -1,5 +1,5 @@
 # Selene
-Repository for DBMS Term Project
+Repository for DBMS Term-Project
 
 ### Notes
 + `Master` branch contains the source code for the 'Selene' android app.
